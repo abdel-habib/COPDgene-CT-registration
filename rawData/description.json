@@ -1,0 +1,38 @@
+{
+    "copd1": {
+        "name": "copd1",
+        "image_dim": [512, 512, 121],
+        "voxel_dim": [0.625, 0.625, 2.5],
+        "features": 773,
+        "displacement_mean": 25.90,
+        "displacement_std": 11.57,
+        "origin": [1, 1, 1]
+    },
+    "copd2": {
+        "name": "copd2",
+        "image_dim": [512, 512, 102],
+        "voxel_dim": [0.645, 0.645, 2.5],
+        "features": 612,
+        "displacement_mean": 21.77,
+        "displacement_std": 6.46,
+        "origin": [1, 1, 1]
+    },
+    "copd3": {
+        "name": "copd3",
+        "image_dim": [512, 512, 126],
+        "voxel_dim": [0.652, 0.652, 2.5],
+        "features": 1172,
+        "displacement_mean": 12.29,
+        "displacement_std": 6.39,
+        "origin": [1, 1, 1]
+    },
+    "copd4": {
+        "name": "copd4",
+        "image_dim": [512, 512, 126],
+        "voxel_dim": [0.590, 0.590, 2.5],
+        "features": 786,
+        "displacement_mean": 30.90,
+        "displacement_std": 13.49,
+        "origin": [1, 1, 1]
+    }
+}

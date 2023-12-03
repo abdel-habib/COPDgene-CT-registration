@@ -1,6 +1,7 @@
 # data
 rawData/*
 !rawData/.gitkeep
+!rawData/description.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
