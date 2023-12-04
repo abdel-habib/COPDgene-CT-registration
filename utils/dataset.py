@@ -1,6 +1,8 @@
 import SimpleITK as sitk
 import os
 import tempfile
+import numpy as np
+import matplotlib.pyplot as plt
 
 def read_raw(
     binary_file_name,
@@ -85,7 +87,7 @@ def read_raw(
     ]
     fp = tempfile.NamedTemporaryFile(suffix=".mhd", delete=False)
 
-    print(header)
+    # print(header)
 
     # Not using the tempfile with a context manager and auto-delete
     # because on windows we can't open the file a second time for ReadImage.
@@ -113,3 +115,102 @@ def convert_raw_to_nifti(
     '''
 
     pass
+
+def create_mask(volume, threshold = 700):
+    '''
+    Create a mask from a given volume using a given threshold.
+
+    Args:
+        volume (numpy array): volume to be masked
+        threshold (int): threshold to be used for the masking
+
+    Returns:
+        numpy array: masked volume
+    '''
+    return np.where(volume > threshold, 1, 0)
+
+
+def display_two_volumes(volume1, volume2, title1, title2, slice=70):
+    '''
+    Display two volumes side by side.
+
+    Args:
+        volume1 (numpy array): first volume to be displayed
+        volume2 (numpy array): second volume to be displayed
+        title1 (str): title of the first volume
+        title2 (str): title of the second volume
+        slice (int): slice to be displayed
+
+    Returns:
+        None
+    '''
+    plt.figure(figsize=(9, 6))
+
+    plt.subplot(1, 2, 1)
+    plt.imshow(volume1[:, :, slice], cmap='gray') 
+    plt.title(title1)
+    plt.axis('off')
+
+
+    plt.subplot(1, 2, 2)
+    plt.imshow(volume2[:, :, slice], cmap='gray') 
+    plt.title(title2)
+    plt.axis('off')
+
+    plt.show()
+
+def display_volumes(*volumes, **titles_and_slices):
+    '''
+    Display multiple volumes side by side.
+
+    Args:
+        volumes (tuple of numpy arrays): volumes to be displayed
+        titles_and_slices (dict): titles and slices for each volume
+        
+    Returns:
+        None
+    '''
+    num_volumes = len(volumes)
+    
+    plt.figure(figsize=(6 * num_volumes, 6))
+
+    for i, volume in enumerate(volumes, start=1):
+        title = titles_and_slices.get(f'title{i}', f'Title {i}')
+        slice_val = titles_and_slices.get(f'slice{i}', 70)
+
+        plt.subplot(1, num_volumes, i)
+        plt.imshow(volume[:, :, slice_val], cmap='gray')
+        plt.title(title)
+        plt.axis('off')
+
+    plt.show()
+
+
+def min_max_normalization(image, mask = None, max_value=None):
+    '''
+    Perform min-max normalization on a given image.
+
+    Args:
+        image ('np.array'): Input image to normalize.
+        mask ('np.array'): Mask to be applied to the image.
+        max_value ('float'): Maximum value for normalization.
+
+    Returns:
+        normalized_image ('np.array'): Min-max normalized image.
+    '''
+
+    if max_value is None:
+        max_value = np.iinfo(image.dtype).max
+        print(f"The maximum value for this volume {image.dtype} is: {max_value}")
+
+    # Ensure the image is a NumPy array for efficient calculations
+    image = np.array(image)
+
+    # Calculate the minimum and maximum pixel values
+    min_value = np.min(image[mask == 1]) if mask is not None else np.min(image)
+    max_actual = np.max(image[mask == 1]) if mask is not None else np.max(image)
+    
+    # Perform min-max normalization
+    normalized_image = (image - min_value) / (max_actual - min_value) * max_value
+    
+    return normalized_image
