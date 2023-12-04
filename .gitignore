@@ -3,6 +3,8 @@ rawData/*
 !rawData/.gitkeep
 !rawData/description.json
 
+niftiData/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
