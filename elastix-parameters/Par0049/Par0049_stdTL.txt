@@ -84,4 +84,9 @@
 (DefaultPixelValue 0)
 
 //the format of resulting deformed moving image
-(ResultImageFormat "mha")
+// (ResultImageFormat "mha")
+
+(ResultImageFormat "nii")
+(ResultImagePixelType "float")
+(ResultImageName "result_image")
+

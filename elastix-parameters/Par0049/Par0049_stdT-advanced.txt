@@ -53,7 +53,9 @@
 (WriteTransformParametersEachResolution "true")
 (WriteResultImageAfterEachResolution "false")
 (WritePyramidImagesAfterEachResolution "false")
-(WriteResultImage "false")
+// (WriteResultImage "false")
+(WriteResultImage "true")
+
 (ShowExactMetricValue "false")
 (ErodeMask "false")
 (UseDirectionCosines "true")
@@ -68,7 +70,7 @@
 (UseRandomSampleRegion "false")
 (SampleRegionSize 50.0 50.0 50.0)
 (MaximumNumberOfSamplingAttempts 50)
-(ResultImageFormat "mha")
+// (ResultImageFormat "mha")
 
 
 // ********** Interpolator and Resampler
@@ -81,4 +83,9 @@
 
 //Default pixel value for pixels that come from outside the picture:
 (DefaultPixelValue -2048)
+
+(ResultImageFormat "nii")
+(ResultImagePixelType "float")
+(ResultImageName "result_image")
+
 
