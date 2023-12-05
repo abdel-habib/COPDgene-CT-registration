@@ -1,4 +1,5 @@
 import os
+import pandas as pd
 
 def create_directory_if_not_exists(path):
     '''
@@ -36,3 +37,21 @@ def replace_text_in_file(file_path, search_text, replacement_text):
             print(f"File not found: {file_path}")
         # except Exception as e:
         #     print(f"An error occurred: {e}")
+
+def add_and_delete_rows(file_path, row1, row2):
+    # Add two rows at the beginning of the file
+    with open(file_path, 'r+') as file:
+        content = file.read()
+        file.seek(0, 0)
+        file.write(row1 + '\n' + row2 + '\n' + content)
+
+def delete_added_rows(file_path):
+    # Delete the first two rows from the file
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+
+    # Handle different newline characters when writing back to the file
+    with open(file_path, 'w', newline=os.linesep) as file:
+        file.writelines(lines[2:])
+
+

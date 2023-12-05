@@ -124,7 +124,7 @@ def control_points_transformix(
     reg_moving_name = os.path.join(moving_path.replace("\\", "/").split("/")[0], moving_path.replace("\\", "/").split("/")[-1].split(".")[0])
 
     # create an output directory for the labels
-    output_dir = f'output/labels/output_{reg_fixed_name}/{reg_moving_name}' # rem _float64
+    output_dir = f'output/points/output_{reg_fixed_name}/{reg_moving_name}' # rem _float64
 
     # creates the output directory
     create_dir_callback(output_dir)
@@ -134,4 +134,6 @@ def control_points_transformix(
 
     # run transformix on all combinations
     excute_cmd_callback(command_line)
+
+    return output_dir
 

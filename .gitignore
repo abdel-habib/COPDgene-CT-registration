@@ -4,6 +4,7 @@ rawData/*
 !rawData/description.json
 
 niftiData/*
+notebooks/output
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
