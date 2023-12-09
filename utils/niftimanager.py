@@ -27,7 +27,7 @@ def show_nifti(file_data, title, slice=25):
         title ('str'): Title for the plot.
         slice ('int'): Slice index to display.
     '''        
-    plt.imshow(file_data[:, :, slice], cmap='gray')
+    plt.imshow(file_data[slice, :, :], cmap='gray')
     plt.title(title)
     # plt.colorbar()
     plt.axis('off')
