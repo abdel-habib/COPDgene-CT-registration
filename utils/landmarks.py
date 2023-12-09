@@ -55,3 +55,9 @@ def get_landmarks_from_txt(transformed_file_path, search_key='OutputIndexFixed')
     landmarks_list = [list(map(int, df_col[idx].split(' ')[-4:-1])) for idx in range(len(df_col))]
 
     return landmarks_list
+
+def visualize_landmarks():
+    '''
+    Visualize the landmarks on the reference image.
+    '''
+    pass

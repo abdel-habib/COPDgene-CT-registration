@@ -3,6 +3,8 @@ import os
 import tempfile
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.ndimage import binary_erosion, binary_dilation
+from skimage import measure
 
 def read_raw(
     binary_file_name,
@@ -127,7 +129,145 @@ def create_mask(volume, threshold = 700):
     Returns:
         numpy array: masked volume
     '''
-    return np.where(volume > threshold, 1, 0)
+    return np.where(volume <= threshold, 1, 0)
+
+def label_regions(mask):
+    '''
+    Label connected components in a binary mask.
+
+    Args:
+        mask (numpy array): Binary mask.
+
+    Returns:
+        tuple: A tuple containing labeled mask and the number of labels.
+    '''
+    labeled_mask, num_labels = measure.label(mask, connectivity=1, return_num=True, background=0)
+    return labeled_mask, num_labels
+
+def get_largest_regions(labeled_mask, num_regions=2):
+    '''
+    Get the largest connected regions in a labeled mask.
+
+    Args:
+        labeled_mask (numpy array): Labeled mask.
+        num_regions (int): Number of largest regions to retrieve.
+
+    Returns:
+        list: List of region properties for the largest regions.
+    '''
+    regions = measure.regionprops(labeled_mask)
+    regions.sort(key=lambda x: x.area, reverse=True)
+    regions = regions[:min(num_regions, len(regions))]
+    # print([regions[i].axis_major_length for i in range(len(regions))])
+    # print([regions[i].axis_minor_length for i in range(len(regions))])
+    return regions
+
+def create_masks(labeled_mask, regions):
+    '''
+    Create masks for specific regions in a labeled mask.
+
+    Args:
+        labeled_mask (numpy array): Labeled mask.
+        regions (list): List of region properties for which masks need to be created.
+
+    Returns:
+        list: List of masks corresponding to the specified regions.
+    '''
+    masks = [labeled_mask == region.label for region in regions]
+    return masks
+
+def fill_holes_and_erode(mask, dilation_structure=(7, 7, 5), erosion_structure=(3, 3, 3)):
+    '''
+    Fill holes in a binary mask and perform erosion.
+
+    Args:
+        mask (numpy array): Binary mask.
+        dilation_structure (tuple): Dilation structure for binary dilation.
+        erosion_structure (tuple): Erosion structure for binary erosion.
+
+    Returns:
+        numpy array: Processed mask after filling holes and erosion.
+    '''
+    filled_mask = binary_dilation(mask, structure=np.ones(dilation_structure))
+    eroded_mask = binary_erosion(filled_mask, structure=np.ones(erosion_structure))
+    return eroded_mask
+
+def remove_trachea(largest_masks, get_largest_regions, create_masks):
+    '''
+    Remove the trachea from a set of largest masks.
+
+    Args:
+        largest_masks (numpy array): 3D array of largest masks.
+        get_largest_regions (function): Function to get largest regions.
+        create_masks (function): Function to create masks.
+
+    Returns:
+        numpy array: 3D array of masks with trachea removed.
+    '''
+    # Find bounding boxes for each region in the 3D mask
+    labeled_mask_slices = [label_regions(largest_masks[:, :, idx])[0] for idx in range(largest_masks.shape[2])]
+    labeled_mask_slices = np.transpose(labeled_mask_slices, (1, 2, 0))
+
+    largest_regions_slices = [
+        get_largest_regions(labeled_mask_slices[:, :, idx], num_regions=3)
+        for idx in range(labeled_mask_slices.shape[2])
+    ]
+
+    largest_regions_masks = [
+        # we filter the trachea by checking the difference between the major and minor axis length when there is only 1 region
+        create_masks(labeled_mask_slices[:, :, idx], region)[0] if len(region) == 1 and (abs(region[0].axis_major_length - region[0].axis_minor_length)) > 20 else 
+
+        # remove the trachea if there are 3 regions, it will be the 3rd region as we sort by area (highest to lowest)
+        create_masks(labeled_mask_slices[:, :, idx], region)[0] + create_masks(labeled_mask_slices[:, :, idx], region)[1] if len(region) == 3 else 
+
+        # when there are only 2 regions, we check the difference in the area (area of the first region has to be atleast 50 more than the second region) to indicate that it is a lung not a trachea
+        # also check if the minor axis of the second region (trachea) is less than 100
+        # this condition happens when both lungs are touching each other as a region, and trachea as another region
+        create_masks(labeled_mask_slices[:, :, idx], region)[0] if len(region) == 2 and (getattr(region[0], 'area') - getattr(region[1], 'area') > 50) and (region[1].axis_minor_length < 100)  else 
+
+        # when there are only 2 regions, we combine them. This is after the previous condition is met (when only 2 lungs are detected)
+        create_masks(labeled_mask_slices[:, :, idx], region)[0] + create_masks(labeled_mask_slices[:, :, idx], region)[1] if len(region) == 2 else 
+
+        np.zeros_like(labeled_mask_slices[:, :, idx])
+        for idx, region in enumerate(largest_regions_slices)
+    ]
+    largest_regions_masks = np.transpose(largest_regions_masks, (1, 2, 0))
+
+    return largest_regions_masks
+
+def segment_lungs_and_remove_trachea(volume, threshold=700, dilation_structure=(7, 7, 5), erosion_structure=(3, 3, 3)):
+    '''
+    Segment lungs and remove trachea from a given 3D volume.
+
+    Args:
+        volume (numpy array): 3D volume.
+        threshold (int): Threshold for creating the initial mask.
+        dilation_structure (tuple): Dilation structure for binary dilation.
+        erosion_structure (tuple): Erosion structure for binary erosion.
+
+    Returns:
+        tuple: A tuple containing the initial mask, labeled mask, and processed mask without trachea.
+    '''
+    # create a mask
+    initial_mask = create_mask(volume, threshold=threshold)
+
+    # Label connected components
+    labeled_mask, _ = label_regions(initial_mask)
+
+    # Get the largest three regions (two lungs and trachea)
+    largest_regions = get_largest_regions(labeled_mask, num_regions=3)
+
+    # Create masks for the largest three regions
+    largest_masks = create_masks(labeled_mask, largest_regions)[1]
+
+    # remove the trachea
+    largest_masks_without_trachea = remove_trachea(largest_masks, get_largest_regions, create_masks)
+
+    # Exclude the trachea by subtracting it from the processed mask
+    # processed_mask_w_trachea = fill_holes_and_erode(largest_masks, dilation_structure=(7, 7, 5), erosion_structure=(7, 7, 7))
+    processed_mask_without_trachea = fill_holes_and_erode(largest_masks_without_trachea, dilation_structure=dilation_structure, erosion_structure=erosion_structure)
+
+    return initial_mask, labeled_mask, processed_mask_without_trachea
 
 
 def display_two_volumes(volume1, volume2, title1, title2, slice=70):
