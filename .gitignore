@@ -3,8 +3,8 @@ rawData/*
 !rawData/.gitkeep
 !rawData/description.json
 
-niftiData/*
-notebooks/output
+dataset/*
+!dataset/description.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
