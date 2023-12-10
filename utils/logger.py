@@ -1,12 +1,23 @@
-import pprint
+import sys
+import pprint as pp
+from loguru import logger
 
-pp = pprint.PrettyPrinter(indent=4)
+PPRINT = pp.PrettyPrinter(indent=4)
 
-def pprint_objects(*arg):
+# Custom log format
+fmt = "{message}"
+config = {
+    "handlers": [
+        {"sink": sys.stderr, "format": fmt},
+    ],
+}
+logger.configure(**config)
+
+def pprint(*arg):
     '''
     Print large and indented objects clearly.
 
     Args:
         *arg: Variable number of arguments to print.
     '''
-    pp.pprint(arg)
+    PPRINT.pprint(arg)
