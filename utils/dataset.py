@@ -215,7 +215,7 @@ def remove_trachea(largest_masks, get_largest_regions, create_masks):
 
     largest_regions_masks = [
         # we filter the trachea by checking the difference between the major and minor axis length when there is only 1 region
-        create_masks(labeled_mask_slices[idx, :, :], region)[0] if len(region) == 1 and (abs(region[0].axis_major_length - region[0].axis_minor_length)) > 20 else 
+        create_masks(labeled_mask_slices[idx, :, :], region)[0] if len(region) == 1 and (abs(region[0].axis_major_length - region[0].axis_minor_length)) > 30 else 
 
         # remove the trachea if there are 3 regions, it will be the 3rd region as we sort by area (highest to lowest)
         create_masks(labeled_mask_slices[idx, :, :], region)[0] + create_masks(labeled_mask_slices[idx, :, :], region)[1] if len(region) == 3 else 
@@ -250,7 +250,7 @@ def segment_lungs_and_remove_trachea(volume, threshold=700, dilation_structure=(
         initial_mask (numpy array): Initial mask created from the volume.
         labeled_mask (numpy array): Labeled mask.
         largest_masks (numpy array): 3D array of largest masks.
-        processed_mask_without_trachea (numpy array): 3D array of masks with trachea removed.
+        processed_mask_without_trachea (numpy array): 3D binary array of masks with trachea removed.
     '''
     # create a mask
     initial_mask = create_mask(volume, threshold=threshold)
@@ -274,7 +274,7 @@ def segment_lungs_and_remove_trachea(volume, threshold=700, dilation_structure=(
     # processed_mask_w_trachea = fill_holes_and_erode(largest_masks, dilation_structure=(7, 7, 5), erosion_structure=(7, 7, 7))
     processed_mask_without_trachea = fill_holes_and_erode(largest_masks_without_trachea, dilation_structure=dilation_structure, erosion_structure=erosion_structure)
 
-    return initial_mask, labeled_mask, largest_masks, processed_mask_without_trachea
+    return initial_mask, labeled_mask, largest_masks, processed_mask_without_trachea.astype(np.uint8)
 
 
 def display_two_volumes(volume1, volume2, title1, title2, slice=70):
@@ -326,7 +326,7 @@ def display_volumes(*volumes, **titles_and_slices):
         slice_val = titles_and_slices.get(f'slice{i}', 70)
 
         plt.subplot(1, num_volumes, i)
-        plt.imshow(volume[slice_val, :, :], cmap='viridis') #gray
+        plt.imshow(volume[slice_val, :, :], cmap='gray') #gray
         plt.title(title)
         plt.axis('off')
 
