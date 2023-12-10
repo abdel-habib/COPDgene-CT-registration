@@ -2,28 +2,23 @@ import sys
 import argparse
 import os
 from glob import glob
-import json
-import SimpleITK as sitk
 
 # importing utils and 
 from utils.logger import logger, pprint
-from utils.dataset import read_raw
-from dtype import DataTypes
-
 
 if __name__ == "__main__":
     # optional arguments from the command line 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--train_path', type=str, default='dataset/train', help='root dir for raw training data')
+    parser.add_argument('--dataset_path', type=str, default='dataset/train', help='root dir for raw training data')
     parser.add_argument('--keypoint_type', type=str, default='inhale', help='type of keypoint to be prepared for transformix')
 
     # parse the arguments
     args = parser.parse_args()
 
-    # check if the train_path exists
-    if not os.path.exists(args.train_path):
-        logger.error(f"Path {args.train_path} does not exist")
+    # check if the dataset_path exists
+    if not os.path.exists(args.dataset_path):
+        logger.error(f"Path {args.dataset_path} does not exist")
         sys.exit(1)
 
     # check if the keypoint_type is valid
@@ -31,12 +26,12 @@ if __name__ == "__main__":
         logger.error(f"Keypoint type {args.keypoint_type} is not valid")
         sys.exit(1)
 
-    # get the list of exhale and inhale files from the train_path
-    logger.info(f"Reading keypoint data from '{args.train_path}'")
+    # get the list of exhale and inhale files from the dataset_path
+    logger.info(f"Reading keypoint data from '{args.dataset_path}'")
     if args.keypoint_type == 'inhale':
-        keypoint_files = [path.replace('\\', '/') for path in sorted(glob(os.path.join(args.train_path, "***" , "*300_iBH_xyz_r1.txt"), recursive=True))]
+        keypoint_files = [path.replace('\\', '/') for path in sorted(glob(os.path.join(args.dataset_path, "***" , "*300_iBH_xyz_r1.txt"), recursive=True))]
     else:
-        keypoint_files = [path.replace('\\', '/') for path in sorted(glob(os.path.join(args.train_path, "***" , "*300_eBH_xyz_r1.txt"), recursive=True))]
+        keypoint_files = [path.replace('\\', '/') for path in sorted(glob(os.path.join(args.dataset_path, "***" , "*300_eBH_xyz_r1.txt"), recursive=True))]
     
     logger.info(f"Found {len(keypoint_files)} keypoint files for subjects ({[subject.split('/')[-2] for subject in keypoint_files]})")
     pprint(keypoint_files)

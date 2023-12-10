@@ -15,20 +15,20 @@ if __name__ == "__main__":
     # optional arguments from the command line 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--train_path', type=str, default='dataset/train', help='root dir for raw training data')
+    parser.add_argument('--dataset_path', type=str, default='dataset/train', help='root dir for nifti training data')
 
     # parse the arguments
     args = parser.parse_args()
 
-    # check if the train_path exists
-    if not os.path.exists(args.train_path):
-        logger.error(f"Path {args.train_path} does not exist")
+    # check if the dataset_path exists
+    if not os.path.exists(args.dataset_path):
+        logger.error(f"Path {args.dataset_path} does not exist")
         sys.exit(1)
 
-    # get the list of exhale and inhale files from the train_path
-    logger.info(f"Reading nifti data from '{args.train_path}'")
-    exhale_volumes = [path.replace('\\', '/') for path in sorted(glob(os.path.join(args.train_path, "***" , "*eBHCT.nii.gz"), recursive=True))]
-    inhale_volumes = [path.replace('\\', '/') for path in sorted(glob(os.path.join(args.train_path, "***" , "*iBHCT.nii.gz"), recursive=True))]
+    # get the list of exhale and inhale files from the dataset_path
+    logger.info(f"Reading nifti data from '{args.dataset_path}'")
+    exhale_volumes = [path.replace('\\', '/') for path in sorted(glob(os.path.join(args.dataset_path, "***" , "*eBHCT.nii.gz"), recursive=True))]
+    inhale_volumes = [path.replace('\\', '/') for path in sorted(glob(os.path.join(args.dataset_path, "***" , "*iBHCT.nii.gz"), recursive=True))]
 
     # log the number of exhale and inhale files
     logger.info(f"Found {len(exhale_volumes)} exhale volumes: ({[subject.split('/')[-2] for subject in exhale_volumes]})")
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     print('\n')
 
     # read the data dictionary
-    with open(os.path.join(args.train_path.replace("train", "", 1), 'description.json'), 'r') as json_file:
+    with open(os.path.join(args.dataset_path.replace("train", "", 1), 'description.json'), 'r') as json_file:
         dictionary = json.loads(json_file.read())
 
     # iterate over all of the nifti inhale and exhale volumes and segment the lungs
