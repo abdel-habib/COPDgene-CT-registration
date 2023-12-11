@@ -32,7 +32,8 @@ def register_elastix(fixed_path,
                     reg_params_key,
                     create_dir_callback, 
                     excute_cmd_callback,
-                    fMask = None):
+                    fMask = None,
+                    mMask = None):
     '''
     Perform image registration using elastix.
 
@@ -44,6 +45,7 @@ def register_elastix(fixed_path,
         create_dir_callback ('function'): Callback function to create directories.
         excute_cmd_callback ('function'): Callback function to execute commands.
         fMask ('str'): Optional path to a mask file.
+        mMask ('str'): Optional path to a mask file.
 
     Returns:
         None
@@ -57,8 +59,15 @@ def register_elastix(fixed_path,
     create_dir_callback(output_dir)
 
     # create elastix command line
-    command_line = f'elastix -f "{fixed_path}" -m "{moving_path}" {reg_params} -out "{output_dir}"' if not fMask else \
-                    f'elastix -f "{fixed_path}" -m "{moving_path}" -fMask {fMask} {reg_params} -out "{output_dir}"'
+    if fMask and not mMask:
+        command_line = f'elastix -f "{fixed_path}" -m "{moving_path}" -fMask {fMask} {reg_params} -out "{output_dir}"'
+    elif mMask and not fMask:
+        command_line = f'elastix -f "{fixed_path}" -m "{moving_path}" -mMask {mMask} {reg_params} -out "{output_dir}"'
+    elif mMask and fMask:
+        command_line = f'elastix -f "{fixed_path}" -m "{moving_path}" -fMask {fMask} -mMask {mMask} {reg_params} -out "{output_dir}"'
+    else:
+        command_line = f'elastix -f "{fixed_path}" -m "{moving_path}" {reg_params} -out "{output_dir}"'
+    print("Excuting command: ", command_line)
 
     # call elastix command
     excute_cmd_callback(command_line)
@@ -122,6 +131,11 @@ def control_points_transformix(
         search_text = '(FinalBSplineInterpolationOrder 3)', 
         replacement_text =  '(FinalBSplineInterpolationOrder 0)')
     
+    replace_text_in_file_callback(
+            transform_path, 
+            search_text = '(ResultImagePixelType "short")', 
+            replacement_text =  '(ResultImagePixelType "float")')
+        
     # Get the names of the fixed and moving images for the output directory, names without the file extensions
     reg_fixed_name  = fixed_path.replace("\\", "/").split("/")[-1].split(".")[0] 
     reg_moving_name = moving_path.replace("\\", "/").split("/")[-1].split(".")[0]
