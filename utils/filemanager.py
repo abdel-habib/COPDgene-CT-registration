@@ -1,5 +1,53 @@
 import os
+import sys
 import pandas as pd
+from glob import glob
+from .logger import logger
+
+def get_points_paths(args, suffix):
+    '''
+    Get the paths of the transformed points.
+
+    Args:
+        args ('argparse.Namespace'): Command line arguments.
+        suffix ('str'): Suffix of the file name.
+
+    Returns:
+        paths ('list'): List of paths.
+    '''
+    paths = [path.replace('\\', '/') for path in sorted(glob(os.path.join(args.exp_points_output, "***", "***" , f"*{suffix}.txt"), recursive=True))]
+    return paths
+
+def get_paths(args, suffix):
+    '''
+    Get the paths of the volumes and segmentations.
+
+    Args:
+        args ('argparse.Namespace'): Command line arguments.
+        suffix ('str'): Suffix of the file name.
+
+    Returns:
+        paths ('list'): List of paths.
+    '''
+    paths = [path.replace('\\', '/') for path in sorted(glob(os.path.join(args.dataset_path, "***" , f"*{suffix}.nii.gz"), recursive=True))]
+    return paths
+
+def check_paths(args, paths, message):
+    '''
+    Check if the paths exist.
+
+    Args:
+        args ('argparse.Namespace'): Command line arguments.
+        paths ('list'): List of paths.
+        message ('str'): Message to display in the logger.
+
+    Returns:
+        None
+    '''
+    if len(paths) == 0:
+        logger.error(f"No {message} found in {args.dataset_path} directory.")
+        sys.exit(1)
+
 
 def create_directory_if_not_exists(path):
     '''
