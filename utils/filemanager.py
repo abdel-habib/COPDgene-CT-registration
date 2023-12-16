@@ -4,18 +4,19 @@ import pandas as pd
 from glob import glob
 from .logger import logger
 
-def get_points_paths(args, suffix):
+def get_points_paths(base_path, suffix, num_occurrences = 2):
     '''
     Get the paths of the transformed points.
 
     Args:
         args ('argparse.Namespace'): Command line arguments.
         suffix ('str'): Suffix of the file name.
+        num_occurrences ('int'): Number of occurrences of the suffix in the path.
 
     Returns:
         paths ('list'): List of paths.
     '''
-    paths = [path.replace('\\', '/') for path in sorted(glob(os.path.join(args.exp_points_output, "***", "***" , f"*{suffix}.txt"), recursive=True))]
+    paths = [path.replace('\\', '/') for path in sorted(glob(os.path.join(base_path, *["***"] * num_occurrences , f"*{suffix}.txt"), recursive=True))]
     return paths
 
 def get_paths(args, suffix):
