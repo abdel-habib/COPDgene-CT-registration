@@ -9,7 +9,7 @@ if __name__ == "__main__":
     # optional arguments from the command line 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--dataset_path', type=str, default='dataset/train', help='root dir for nifti training data')
+    parser.add_argument('--dataset_path', type=str, default='dataset/train', help='root dir for nifti data')
     parser.add_argument('--experiment_name', type=str, default='elastix_01', help='experiment name')
     parser.add_argument('--parameters_path', type=str, default='elastix-parameters/Par0003', help='root dir for elastix parameters. The script will use all the parameters in this directory. A single .txt file can also be used.')
     parser.add_argument('--output_path', type=str, default='output', help='root dir for output scripts')
