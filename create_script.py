@@ -3,7 +3,7 @@ import argparse
 import os
 
 from utils.logger import logger
-from utils.filemanager import create_directory_if_not_exists, get_paths, check_paths
+from utils.filemanager import create_directory_if_not_exists, get_paths, check_paths, extract_parameter
 
 if __name__ == "__main__":
     # optional arguments from the command line 
@@ -39,6 +39,9 @@ if __name__ == "__main__":
         reg_params      = ' '.join(['-p "{}"'.format(os.path.join(args.parameters_path, param)) for param in parameters]).replace('\\', '/')    
         reg_params_key  = '+'.join(['{}'.format(param.replace('.txt', '')) for param in parameters])
         transform_idx   = len(parameters) - 1
+
+    # get the name of the parameters folder
+    params_folder_name = extract_parameter(args.parameters_path) # Par0003, Par0004, ...
 
     # create experiment output
     # args.experiment_name is useful to distinguish between different experiments (e.g. with or without preprocessing, etc.)
@@ -100,14 +103,34 @@ if __name__ == "__main__":
             create_directory_if_not_exists(elastix_output_dir)
             create_directory_if_not_exists(transformix_output_dir)
 
+            if params_folder_name == 'Par0003':
+                # elastix version: 3.9
+                elastix_v_path      = '.\\elastix-versions\\elastix_windows32_v3.9\\elastix'
+                transformix_v_path  = '.\\elastix-versions\\elastix_windows32_v3.9\\transformix'
+            
+            elif params_folder_name == 'Par0007':
+                # elastix version: 4.0
+                elastix_v_path      = '.\\elastix-versions\\elastix_windows32_v4.0\\elastix'
+                transformix_v_path  = '.\\elastix-versions\\elastix_windows32_v4.0\\transformix'
+
+            elif params_folder_name == 'Par0011':
+                # elastix version: 4.301
+                elastix_v_path      = '.\\elastix-versions\\elastix_windows64_v4.3\\elastix'
+                transformix_v_path  = '.\\elastix-versions\\elastix_windows64_v4.3\\transformix'
+            else:
+                # default is 4.7
+                elastix_v_path      = '.\\elastix-versions\\elastix_windows64_v4.7\\elastix'
+                transformix_v_path  = '.\\elastix-versions\\elastix_windows64_v4.7\\transformix'
+
+
             # create elastix command line
             if args.use_masks:
-                elastix_command_line = f'elastix -f "{fixed_path}" -m "{moving_path}" -fMask "{fMask}" -mMask "{mMask}" {reg_params} -out "{elastix_output_dir}"'
+                elastix_command_line = f'{elastix_v_path} -f "{fixed_path}" -m "{moving_path}" -fMask "{fMask}" -mMask "{mMask}" {reg_params} -out "{elastix_output_dir}"'
             else:
-                elastix_command_line = f'elastix -f "{fixed_path}" -m "{moving_path}" {reg_params} -out "{elastix_output_dir}"'
+                elastix_command_line = f'{elastix_v_path} -f "{fixed_path}" -m "{moving_path}" {reg_params} -out "{elastix_output_dir}"'
 
             # create transformix command line
-            trasformix_command_line = f'transformix -def "{input_points}" -tp "{transform_path}"  -out "{transformix_output_dir}"'
+            trasformix_command_line = f'{transformix_v_path} -def "{input_points}" -tp "{transform_path}"  -out "{transformix_output_dir}"'
 
             file.write(f"{elastix_command_line}\n")
             file.write(f"{trasformix_command_line}\n")

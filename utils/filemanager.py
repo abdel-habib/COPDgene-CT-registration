@@ -3,6 +3,25 @@ import sys
 import pandas as pd
 from glob import glob
 from .logger import logger
+import re
+
+def extract_parameter(text):
+    '''
+    Extract the parameter number from the text.
+
+    Args:
+        text ('str'): Text to search for the parameter number.
+
+    Returns:
+        parameter_number ('str'): Parameter number.
+    '''
+    match = re.search(r'Par(\w+)', text)
+    if match:
+        return 'Par' + match.group(1)
+    else:
+        return None
+
+
 
 def get_points_paths(base_path, suffix, num_occurrences = 2):
     '''
