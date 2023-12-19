@@ -104,14 +104,22 @@ if __name__ == "__main__":
             create_directory_if_not_exists(transformix_output_dir)
 
             if params_folder_name == 'Par0003':
-                # elastix version: 3.9
-                elastix_v_path      = '.\\elastix-versions\\elastix_windows32_v3.9\\elastix'
-                transformix_v_path  = '.\\elastix-versions\\elastix_windows32_v3.9\\transformix'
+                # elastix version: 3.9 -- fails to allocate memory to register; also can't -def point transformation
+                # elastix_v_path      = '.\\elastix-versions\\elastix_windows32_v3.9\\elastix'
+                # transformix_v_path  = '.\\elastix-versions\\elastix_windows32_v3.9\\transformix'
+                
+                # using default is 4.7
+                elastix_v_path      = '.\\elastix-versions\\elastix_windows64_v4.7\\elastix'
+                transformix_v_path  = '.\\elastix-versions\\elastix_windows64_v4.7\\transformix'
             
             elif params_folder_name == 'Par0007':
-                # elastix version: 4.0
-                elastix_v_path      = '.\\elastix-versions\\elastix_windows32_v4.0\\elastix'
-                transformix_v_path  = '.\\elastix-versions\\elastix_windows32_v4.0\\transformix'
+                # elastix version: 4.0 -- fails to allocate memory to register; also can't -def point transformation
+                # elastix_v_path      = '.\\elastix-versions\\elastix_windows32_v4.0\\elastix'
+                # transformix_v_path  = '.\\elastix-versions\\elastix_windows32_v4.0\\transformix'
+
+                # using default is 4.7
+                elastix_v_path      = '.\\elastix-versions\\elastix_windows64_v4.7\\elastix'
+                transformix_v_path  = '.\\elastix-versions\\elastix_windows64_v4.7\\transformix'
 
             elif params_folder_name == 'Par0011':
                 # elastix version: 4.301
