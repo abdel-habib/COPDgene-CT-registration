@@ -54,10 +54,12 @@ def get_landmarks_from_txt(transformed_file_path, search_key='OutputIndexFixed')
 
     return landmarks_list
 
-def visualize_landmarks(landmarks_path=None, reference_image_path=None, slice_index=70, voxel_dim=(1, 1, 1)):
+def visualize_landmarks(landmarks_path=None, reference_image_path=None, slice_index=70):
     '''
     Visualize the landmarks on the reference image or a mask.
     '''
+    # -1 to match the MATLAB visualizer indexing result
+    slice_index = slice_index - 1
 
     # Load the reference image
     nii_image = nib.load(reference_image_path)
@@ -65,30 +67,25 @@ def visualize_landmarks(landmarks_path=None, reference_image_path=None, slice_in
 
     # transpose the axis to rotate for visualization
     reference_image = reference_image.transpose(2, 1, 0)
-
-    # Load 3D landmarks from the file
-    landmarks_data = np.loadtxt(landmarks_path)
-
-    # Extract x, y, z coordinates
-    x_coords = landmarks_data[:, 0].astype(int)
-    y_coords = landmarks_data[:, 1].astype(int)
-    z_coords = landmarks_data[:, 2].astype(int)
-
-    # reshsaped_landmarks = np.array([z_coords, y_coords, x_coords]).T
-    # voxel_dim = (voxel_dim[2], voxel_dim[1], voxel_dim[0])
-    # reshsaped_landmarks = reshsaped_landmarks * voxel_dim
-
-    # -1 to match the MATLAB visualizer indexing result
-    slice_index = slice_index - 1
     
     # Visualize a specific slice
     plt.figure(figsize=(8, 8))
     plt.imshow(reference_image[slice_index, :, :], cmap='gray')
-    plt.title(f"Slice {slice_index}")
 
-    # Plot landmarks on the current slice
-    plt.scatter(x_coords, y_coords, c='r', marker='+', label='Landmarks')
-    plt.title('Landmarks on Volume Slice')
-    plt.legend()
-    plt.axis('off')
+    # Load 3D landmarks from the file
+    landmarks_data = np.loadtxt(landmarks_path)
+    slice_landmarsk = np.array([inner_list for inner_list in landmarks_data if inner_list[2] == slice_index+1])
+    
+    if len(slice_landmarsk) > 0:
+            
+        # Extract x, y, z coordinates
+        x_coords = slice_landmarsk[:, 0].astype(int)
+        y_coords = slice_landmarsk[:, 1].astype(int)
+        z_coords = slice_landmarsk[:, 2].astype(int)
+
+        # Plot landmarks on the current slice
+        plt.scatter(x_coords, y_coords, c='r', marker='+', label='Landmarks')
+        plt.legend()
+        plt.axis('off')
+    plt.title(f"Slice {slice_index+1}")
     plt.show()
