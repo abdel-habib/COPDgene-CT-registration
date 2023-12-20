@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import nibabel as nib
+import os
 
 def write_landmarks_to_list(landmarks, file_path):
     '''
@@ -54,10 +55,14 @@ def get_landmarks_from_txt(transformed_file_path, search_key='OutputIndexFixed')
 
     return landmarks_list
 
-def visualize_landmarks(landmarks_path=None, reference_image_path=None, slice_index=70):
+def visualize_landmarks(slice_index=70, subject='copd1'):
     '''
     Visualize the landmarks on the reference image or a mask.
     '''
+    # Define the paths
+    landmarks_path = os.path.join(os.getcwd(),f'../dataset/train/{subject}/{subject}_300_eBH_xyz_r1.txt')
+    reference_image_path = os.path.join(os.getcwd(),f'../dataset/train/{subject}/{subject}_eBHCT_lung.nii.gz') # _lung
+    
     # -1 to match the MATLAB visualizer indexing result
     slice_index = slice_index - 1
 
@@ -69,7 +74,7 @@ def visualize_landmarks(landmarks_path=None, reference_image_path=None, slice_in
     reference_image = reference_image.transpose(2, 1, 0)
     
     # Visualize a specific slice
-    plt.figure(figsize=(8, 8))
+    # plt.figure(figsize=(6, 6))
     plt.imshow(reference_image[slice_index, :, :], cmap='gray')
 
     # Load 3D landmarks from the file
