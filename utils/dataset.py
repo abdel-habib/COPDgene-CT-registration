@@ -276,6 +276,35 @@ def segment_lungs_and_remove_trachea(volume, threshold=700, dilation_structure=(
 
     return initial_mask, labeled_mask, largest_masks, processed_mask_without_trachea.astype(np.uint8)
 
+def segment_body(image, threshold=700):
+    '''
+    Segment the body from a given 3D volume with shape (Slice, H, W). Note that this shape is a must for
+    the internal functions to compute as expected.
+
+    Args:
+        image (numpy array): 3D volume shape (slice, H, W).
+        threshold (int): Threshold for creating the initial mask.
+
+    Returns:
+        mask (numpy array): Initial mask created from the volume.
+        labeled_mask (numpy array): Labeled mask.
+        largest_masks (numpy array): 3D array of largest masks.
+        body_segmented (numpy array): 3D binary array of masks with body segmented.
+
+    '''
+    mask = create_mask(image, threshold=threshold)
+    labeled_mask, _ = label_regions(mask)
+    largest_regions = get_largest_regions(labeled_mask, num_regions=3)
+    largest_masks = create_masks(labeled_mask, largest_regions)[0]
+
+    # to have zeros and ones instead of binary false and true
+    largest_masks = largest_masks.astype(np.int8)
+
+    body_segmented = np.zeros_like(image)
+    body_segmented[largest_masks == 0] = image[largest_masks == 0]
+
+    return mask, labeled_mask, largest_masks, body_segmented
+
 
 def display_two_volumes(volume1, volume2, title1, title2, slice=70):
     '''
