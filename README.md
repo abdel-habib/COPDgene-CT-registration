@@ -34,3 +34,8 @@ If the gt (exhale) points are not given, use the same command without `--generat
 ```
 python evaluate_transformation.py --experiment_name "elastix_None" --reg_params_key "Parameter.affine+Parameter.bsplines" --dataset_path "dataset\train"
 ```
+
+To preprocess
+```
+python preprocess.py --dataset_path "dataset/train" --experiment_name "Normalization+Bilateral+CLAHE"
+```

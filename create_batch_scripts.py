@@ -45,7 +45,8 @@ if __name__ == '__main__':
         logger.info(f"[{idx+1}/{len(single_parameters_to_script)}] Creating batch script for {param_path}.")
 
         command = f'python create_script.py \
-            --experiment_name "NoPreprocessing+UseMasks+SingleParamFile" \
+            --dataset_path "dataset_processed/Normalization+Bilateral+CLAHE/train" \
+            --experiment_name "Normalization+Bilateral+CLAHE+UseMasks+SingleParamFile" \
             --parameters_path "{param_path}" \
             --use_masks'
         

@@ -4,6 +4,7 @@ rawData/*
 !rawData/description.json
 
 dataset/*
+dataset_processed/*
 !dataset/description.json
 output/*
 notebooks/output
