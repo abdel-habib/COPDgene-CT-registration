@@ -58,14 +58,14 @@ if __name__ == "__main__":
         # segment the lungs
         if subject_name == 'copd2':
             # set a specific threshold to copd2
-            threshold = 400
+            threshold = 430
         else:
             threshold = 700 
         print("thresh:\t\t", threshold)
 
         _, _, _, lung_segmentation = \
             segment_lungs_and_remove_trachea(np_image, 
-                                            threshold=threshold)
+                                            threshold=threshold, structure=(7, 7, 7))
         
         lung_segmentation_sitk = sitk.GetImageFromArray(lung_segmentation)
         lung_segmentation_sitk.CopyInformation(sitk_image)
