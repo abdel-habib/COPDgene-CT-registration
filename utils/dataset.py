@@ -238,7 +238,7 @@ def remove_trachea(largest_masks, get_largest_regions, create_masks):
 
     return largest_regions_masks
 
-def segment_lungs_and_remove_trachea(volume, threshold=700, structure=(7, 7, 5)):
+def segment_lungs_and_remove_trachea(volume, threshold=700, structure=(7, 7, 5), fill_holes_before_trachea_removal=False):
     '''
     Segment lungs and remove trachea from a given 3D volume with shape (Slice, H, W). Note that this shape is a must for 
     the internal functions to compute as expected.
@@ -267,11 +267,14 @@ def segment_lungs_and_remove_trachea(volume, threshold=700, structure=(7, 7, 5))
     # Create masks for the largest three regions
     largest_masks = create_masks(labeled_mask, largest_regions)[1]
 
+    # fill holes of the largest mask
+    if fill_holes_before_trachea_removal:
+        largest_masks = fill_holes_and_erode(largest_masks, structure=tuple([2*x for x in structure]))
+
     # remove the trachea
     largest_masks_without_trachea = remove_trachea(largest_masks, get_largest_regions, create_masks)
 
     # Exclude the trachea by subtracting it from the processed mask
-    # processed_mask_w_trachea = fill_holes_and_erode(largest_masks, dilation_structure=(7, 7, 5), erosion_structure=(7, 7, 7))
     processed_mask_without_trachea = fill_holes_and_erode(largest_masks_without_trachea, structure=structure)
 
     return initial_mask, labeled_mask, largest_masks, processed_mask_without_trachea.astype(np.uint8)
@@ -378,6 +381,8 @@ def min_max_normalization(image, mask = None, max_value=None):
     if max_value is None:
         max_value = np.iinfo(image.dtype).max
         print(f"The maximum value for this volume {image.dtype} is: {max_value}")
+    
+    print("Using mask for normalization" if mask is not None else "Not using mask for normalization")
 
     # Ensure the image is a NumPy array for efficient calculations
     image = np.array(image)
@@ -388,5 +393,6 @@ def min_max_normalization(image, mask = None, max_value=None):
     
     # Perform min-max normalization
     normalized_image = (image - min_value) / (max_actual - min_value) * max_value
+    normalized_image = np.clip(normalized_image, 0, max_value)
     
-    return normalized_image
+    return normalized_image.astype(image.dtype)
