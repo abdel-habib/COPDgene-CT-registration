@@ -1,5 +1,6 @@
 from utils.elastix import excute_cmd
 from utils.logger import logger
+from utils.filemanager import extract_parameter
 
 if __name__ == '__main__':
     # list down the parameters files to create a batch script for each
@@ -17,6 +18,7 @@ if __name__ == '__main__':
         f'{parameters_base_path}/Par0003/Par0003.bs-R4-fg.txt',
         f'{parameters_base_path}/Par0003/Par0003.bs-R4-ug.txt',
         f'{parameters_base_path}/Par0003/Par0003.bs-R5-fg.txt',
+        f'{parameters_base_path}/Par0003/Par0003.bs-R6-fg.txt',
         f'{parameters_base_path}/Par0003/Par0003.bs-R6-ug.txt',
         f'{parameters_base_path}/Par0003/Par0003.bs-R7-fg.txt',
         f'{parameters_base_path}/Par0003/Par0003.bs-R7-ug.txt',
@@ -44,11 +46,23 @@ if __name__ == '__main__':
     for idx, param_path in enumerate(single_parameters_to_script):
         logger.info(f"[{idx+1}/{len(single_parameters_to_script)}] Creating batch script for {param_path}.")
 
+        # create the script
         command = f'python create_script.py \
-            --dataset_path "dataset_processed/Normalization+Bilateral+CLAHE/train" \
-            --experiment_name "Normalization+Bilateral+CLAHE+UseMasks+SingleParamFile" \
+            --dataset_path "dataset/train" \
+            --experiment_name "NoPreprocessing+UseMasks3+SingleParamFile" \
             --parameters_path "{param_path}" \
             --use_masks'
-        
         excute_cmd(command)
-        
+
+        # run the script
+        # {param_path.split("/")[-1].replace(".txt", "")} was taken from create_script.py for a single command passed
+        command = f'call output/NoPreprocessing+UseMasks3+SingleParamFile/{param_path.split("/")[-1].replace(".txt", "")}/elastix_transformix.bat'
+        excute_cmd(command)
+
+        # evaluate the script
+        command = f'python evaluate_transformation.py \
+            --experiment_name "NoPreprocessing+UseMasks3+SingleParamFile" \
+            --reg_params_key "{param_path.split("/")[-1].replace(".txt", "")}" \
+            --dataset_path "dataset/train"\
+            --generate_report'
+        excute_cmd(command)
