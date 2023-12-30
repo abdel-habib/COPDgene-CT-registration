@@ -8,6 +8,28 @@ from utils.filemanager import create_directory_if_not_exists, get_paths, check_p
 from utils.preprocess import bilateral_filter_3d, clahe_3d
 from utils.dataset import segment_body, min_max_normalization
 
+def export(args, sample_name, filename_full, final_processed_sitk):  
+    '''
+    Export the final processed image to the output folder.
+
+    Args:
+        args (argparse): arguments from the command line
+        sample_name (str): sample name (e.g. copd1, copd2, ...)
+        filename_full (str): filename full (e.g. copd1_eBHCT, copd1_iBHCT, ...)
+        final_processed_sitk_int16 (sitk.Image): final processed image
+
+    Returns:
+        None
+    '''  
+    # cast the final processed image to sitk.int16
+    final_processed_sitk_int16 = sitk.Cast(final_processed_sitk, sitk.sitkInt16)
+
+    # save the final processed image
+    logger.info(">> Saving the final processed image...")
+    sample_output_path = os.path.join(args.exp_output, sample_name)
+    create_directory_if_not_exists(sample_output_path)
+    sitk.WriteImage(final_processed_sitk_int16, os.path.join(sample_output_path, f"{filename_full}.nii.gz"))
+
 if __name__ == "__main__":
     # optional arguments from the command line 
     parser = argparse.ArgumentParser()
@@ -57,10 +79,18 @@ if __name__ == "__main__":
         original_min = min_max_filter.GetMinimum()
         original_max = min_max_filter.GetMaximum()
 
+        # set a specific threshold to copd2
+        if sample_name == 'copd2':
+            threshold = 430
+        else:
+            threshold = 700
+
+        print("thresh: ", threshold)
+
         # note that the gantry and black background are still present and we need to remove them.
         # segmenting the body and removing the gantry
         mask, labeled_mask, largest_masks, body_segmented = \
-            segment_body(sample_image, threshold=700)
+            segment_body(sample_image, threshold=threshold)
         
         # inverging the largest masks to focus on the body for being used as a mask
         largest_masks_sitk = sitk.GetImageFromArray(largest_masks)
@@ -88,15 +118,8 @@ if __name__ == "__main__":
         logger.info(">> Contrast enhancement using CLAHE...")
         final_processed_sitk = clahe_3d(filtered_sitk, clip_limit=0.01)
 
-        # cast the final processed image to sitk.int16
-        final_processed_sitk_int16 = sitk.Cast(final_processed_sitk, sitk.sitkInt16)
-
-        # save the final processed image
-        logger.info(">> Saving the final processed image...")
-        sample_output_path = os.path.join(args.exp_output, sample_name)
-        create_directory_if_not_exists(sample_output_path)
-        sitk.WriteImage(final_processed_sitk_int16, os.path.join(sample_output_path, f"{filename_full}.nii.gz"))
-
+        # export the final processed image to the output folder
+        export(args, sample_name, filename_full, final_processed_sitk)
 
 
 
