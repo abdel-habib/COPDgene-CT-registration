@@ -64,6 +64,7 @@ def visualize_landmarks(slice_index=70, subject='copd1'):
     landmarks_path = os.path.join(os.getcwd(),f'../dataset/train/{subject}/{subject}_300_iBH_xyz_r1.txt')
     reference_image_path = os.path.join(os.getcwd(),f'../dataset/train/{subject}/{subject}_iBHCT.nii.gz') # _lung
     reference_mask_path = os.path.join(os.getcwd(),f'../dataset/train/{subject}/{subject}_iBHCT_lung.nii.gz') # _lung
+    # reference_mask_path = os.path.join(os.getcwd(),f'../dataset/segmentation_trails/mask1/train/{subject}_eBHCT_lung.nii.gz') # _lung
 
     # -1 to match the MATLAB visualizer indexing result
     slice_index = slice_index - 1
@@ -107,6 +108,6 @@ def visualize_landmarks(slice_index=70, subject='copd1'):
 
     plt.legend()
     plt.axis('off')
-    plt.title(f"Slice {slice_index+1}")
+    # plt.title(f"Slice {slice_index+1}")
     plt.show()
 
