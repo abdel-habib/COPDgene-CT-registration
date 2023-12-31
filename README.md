@@ -1,3 +1,23 @@
+# <h1 align="center">COPDgene CT Registration</h1>
+
+<h3 align="center">A full lung segmentation, pre-processing and image registration methodologies that were applied on 4DCT DIR-Lab dataset challenge.</h3>
+
+
+![](./Figures/Segmentation/overall-seg-results.png)
+
+
+Table of Contents
+=================
+
+<!--ts-->
+
+   * [Setup Guideline](#setup-guideline)
+<!--te-->
+
+
+Setup Guideline
+============
+
 Prepare the inhale keypoint file to match transformix requirements
 ```
 python prepare_keypoints_transformix.py --dataset_path "dataset/train" --keypoint_type "inhale"
