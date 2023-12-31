@@ -56,7 +56,7 @@ if __name__ == "__main__":
     check_paths(args, inhale_volumes, "inhale volumes")
 
     # logs
-    logger.warning("This script doesn't copy the landmarks or the lung masks (segmentation) to the output folder. Please copy them manually.")
+    logger.warning("This script doesn't copy the landmarks, the lung masks (segmentation), or the dataset json to the output folder. Please copy them manually.")
     logger.info(f"Experiment name: {args.experiment_name}")
     logger.info(f"Split name: {split_name}")
     logger.info(f"Output path: {args.exp_output}")

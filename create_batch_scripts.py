@@ -43,26 +43,32 @@ if __name__ == '__main__':
     ]
 
     # create a batch script for each parameters file
+    experiment_name = 'CLAHE+UseMasks3+SingleParamFile'
+    dataset_path    = 'dataset_processed/CLAHE/train'
+    print(f"Experiment name: {experiment_name}...")
+    print(f"Dataset path: {dataset_path}... \n")
+
+    # create a batch script for each parameters file
     for idx, param_path in enumerate(single_parameters_to_script):
         logger.info(f"[{idx+1}/{len(single_parameters_to_script)}] Creating batch script for {param_path}.")
 
         # create the script
         command = f'python create_script.py \
-            --dataset_path "dataset/train" \
-            --experiment_name "NoPreprocessing+UseMasks3+SingleParamFile" \
+            --dataset_path "{dataset_path}" \
+            --experiment_name "{experiment_name}" \
             --parameters_path "{param_path}" \
             --use_masks'
         excute_cmd(command)
 
         # run the script
         # {param_path.split("/")[-1].replace(".txt", "")} was taken from create_script.py for a single command passed
-        command = f'call output/NoPreprocessing+UseMasks3+SingleParamFile/{param_path.split("/")[-1].replace(".txt", "")}/elastix_transformix.bat'
+        command = f'call output/{experiment_name}/{param_path.split("/")[-1].replace(".txt", "")}/elastix_transformix.bat'
         excute_cmd(command)
 
         # evaluate the script
         command = f'python evaluate_transformation.py \
-            --experiment_name "NoPreprocessing+UseMasks3+SingleParamFile" \
+            --experiment_name "{experiment_name}" \
             --reg_params_key "{param_path.split("/")[-1].replace(".txt", "")}" \
-            --dataset_path "dataset/train"\
+            --dataset_path "{dataset_path}"\
             --generate_report'
         excute_cmd(command)
