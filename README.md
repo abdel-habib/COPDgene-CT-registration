@@ -26,7 +26,7 @@ Dataset Structure
 ├── description.json                     # A JSON file that holds the dataset description.
 ├── train                                # Training data directory. Given all sort of data.
     └── copd1
-        └── copd1_300_eBH_xyz_r1.txt     # exhale keypoints
+        ├── copd1_300_eBH_xyz_r1.txt     # exhale keypoints
         ├── copd1_300_iBH_xyz_r1.txt     # inhale keypoints
         ├── copd1_eBHCT.img              # raw exhale intensity volume
         └── copd1_iBHCT.img              # raw inhale intensity volume
@@ -34,9 +34,9 @@ Dataset Structure
     ├── copd3
     └── copd4 
 └── test                                 # Test data directory. Given only the intensity volumes and inhale keypoints.
-    └── copdXX
-    └── copdXX
-    └── copdXX
+    ├── copdXX
+    ├── copdXX
+    ├── copdXX
     └── copdXX
 ```
 
