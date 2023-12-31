@@ -3,7 +3,7 @@
 <h3 align="center">A full lung segmentation, pre-processing and image registration methodologies that were applied on 4DCT DIR-Lab dataset challenge.</h3>
 
 
-![](./Figures/Segmentation/overall-seg-results.png)
+![](./Figures/Segmentation/seg-banner.png)
 
 
 Table of Contents
