@@ -47,7 +47,7 @@ def plot_boxplot(experiment_name, output_dir, exclude=[], title="Boxplot"):
 
     # Get the data
     columns = os.listdir(f'../output/{experiment_name}/')
-    TRE_sample_results = [path.replace('\\', '/') for path in sorted(glob(os.path.join(output_dir, experiment_name, "***", "points", "TRE_sample_results.csv"), recursive=True))]
+    TRE_sample_results = [path.replace('\\', '/') for path in glob(os.path.join(output_dir, experiment_name, "***", "points", "TRE_sample_results.csv"), recursive=True)]
 
     # Remove the excluded columns
     for column in exclude:
