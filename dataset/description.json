@@ -38,6 +38,59 @@
         }
     },
     "test": {
-        
+        "copd5": {
+            "name": "copd5",
+            "image_dim": [512, 512, 131],
+            "voxel_dim": [0.647, 0.647, 2.5],
+            "features": 1029,
+            "displacement_mean": 30.90,
+            "displacement_std": 14.05,
+            "origin": [1, 1, 1]
+        },
+        "copd6": {
+            "name": "copd6",
+            "image_dim": [512, 512, 119],
+            "voxel_dim": [0.633, 0.633, 2.5],
+            "features": 633,
+            "displacement_mean": 28.32,
+            "displacement_std": 9.20,
+            "origin": [1, 1, 1]
+        },
+        "copd7": {
+            "name": "copd7",
+            "image_dim": [512, 512, 112],
+            "voxel_dim": [0.625, 0.625, 2.5],
+            "features": 575,
+            "displacement_mean": 21.66,
+            "displacement_std": 7.66,
+            "origin": [1, 1, 1]
+        },
+        "copd8": {
+            "name": "copd8",
+            "image_dim": [512, 512, 115],
+            "voxel_dim": [0.586, 0.586, 2.5],
+            "features": 791,
+            "displacement_mean": 27.57,
+            "displacement_std": 13.61,
+            "origin": [1, 1, 1]
+        },
+        "copd9": {
+            "name": "copd9",
+            "image_dim": [512, 512, 116],
+            "voxel_dim": [0.664, 0.664, 2.5],
+            "features": 447,
+            "displacement_mean": 14.84,
+            "displacement_std": 10.01,
+            "origin": [1, 1, 1]
+        },
+        "copd10": {
+            "name": "copd10",
+            "image_dim": [512, 512, 135],
+            "voxel_dim": [0.742, 0.742, 2.5],
+            "features": 480,
+            "displacement_mean": 22.48,
+            "displacement_std": 10.64,
+            "origin": [1, 1, 1]
+        }
     }
 }

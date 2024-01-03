@@ -56,14 +56,14 @@ def get_landmarks_from_txt(transformed_file_path, search_key='OutputIndexFixed')
 
     return landmarks_list
 
-def visualize_landmarks(slice_index=70, subject='copd1'):
+def visualize_landmarks(slice_index=70, subject='copd1', split='train'):
     '''
     Visualize the landmarks on the reference image or a mask.
     '''
     # Define the paths
-    landmarks_path = os.path.join(os.getcwd(),f'../dataset/train/{subject}/{subject}_300_iBH_xyz_r1.txt')
-    reference_image_path = os.path.join(os.getcwd(),f'../dataset/train/{subject}/{subject}_iBHCT.nii.gz') # _lung
-    reference_mask_path = os.path.join(os.getcwd(),f'../dataset/train/{subject}/{subject}_iBHCT_lung.nii.gz') # _lung
+    landmarks_path = os.path.join(os.getcwd(),f'../dataset/{split}/{subject}/{subject}_300_iBH_xyz_r1.txt')
+    reference_image_path = os.path.join(os.getcwd(),f'../dataset/{split}/{subject}/{subject}_iBHCT.nii.gz') # _lung
+    reference_mask_path = os.path.join(os.getcwd(),f'../dataset/{split}/{subject}/{subject}_iBHCT_lung.nii.gz') # _lung
     # reference_mask_path = os.path.join(os.getcwd(),f'../dataset/segmentation_trails/mask1/train/{subject}_eBHCT_lung.nii.gz') # _lung
 
     # -1 to match the MATLAB visualizer indexing result

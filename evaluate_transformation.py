@@ -71,9 +71,9 @@ if __name__ == "__main__":
             sample_name = gt_point.split('/')[-1].split('_')[0] #copd1, copd2, ...
 
             # load the dataset dictionary, we remove the last path element because we want to get the description.json file
-            with open(os.path.join(*args.dataset_path.replace('\\', '/').split("/")[:-1],'description.json'), 'r') as json_file:
+            with open(os.path.join(args.dataset_path.replace("train", "", 1).replace("test", "", 1),'description.json'), 'r') as json_file:
                 dictionary = json.loads(json_file.read())
-            file_information = dictionary['train'][sample_name]
+            file_information = dictionary[args.dataset_path.replace('\\', '/').split("/")[-1]][sample_name]
             print(file_information)
 
             TRE_mean, TRE_std = compute_TRE(output_landmarks_path, gt_point, tuple(file_information['voxel_dim']))

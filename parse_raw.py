@@ -35,14 +35,14 @@ if __name__ == "__main__":
     logger.info(f"Found {len(inhale_volumes)} inhale volumes: ({[subject.split('/')[-2] for subject in inhale_volumes]})\n")
 
     # read the data dictionary
-    with open(os.path.join(args.dataset_path.replace("train", "", 1), 'description.json'), 'r') as json_file:
+    with open(os.path.join(args.dataset_path.replace("train", "", 1).replace("test", "", 1), 'description.json'), 'r') as json_file:
         dictionary = json.loads(json_file.read())
 
     # iterate over all of the raw inhale and exhale volumes and export them as nifti files
     for exhale_volume, inhale_volume in zip(exhale_volumes, inhale_volumes):
         # get the subject name and information
         subject_name = exhale_volume.split('/')[-2]
-        subject_information = dictionary['train'][subject_name]
+        subject_information = dictionary[args.dataset_path.replace('\\', '/').split("/")[-1]][subject_name]
 
         # Access the sitkPixelType value for RAW_DATA
         sitk_pixel_type = DataTypes.RAW_DATA.value

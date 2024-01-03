@@ -37,14 +37,14 @@ if __name__ == "__main__":
     print('\n')
 
     # read the data dictionary
-    with open(os.path.join(args.dataset_path.replace("train", "", 1), 'description.json'), 'r') as json_file:
+    with open(os.path.join(args.dataset_path.replace("train", "", 1).replace("test", "", 1), 'description.json'), 'r') as json_file:
         dictionary = json.loads(json_file.read())
 
     # iterate over all of the nifti inhale and exhale volumes and segment the lungs
     for volume in exhale_volumes + inhale_volumes:
         # get the subject name and information
         subject_name = volume.split('/')[-2]
-        subject_information = dictionary['train'][subject_name]
+        subject_information = dictionary[args.dataset_path.replace('\\', '/').split("/")[-1]][subject_name]
 
         logger.info(f"Segmenting {volume}")
         sitk_image = sitk.ReadImage(volume)

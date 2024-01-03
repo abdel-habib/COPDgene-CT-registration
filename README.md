@@ -94,3 +94,29 @@ If the gt (exhale) points are not given, use the same command without `--generat
 python evaluate_transformation.py --experiment_name "Normalization+UseMasks3+SingleParamFile" --reg_params_key "Par0003.bs-R6-ug" --dataset_path "<<PROCESSED_DATASET_SPLIT_PATH>>"
 ```
 
+
+Test Inference
+============
+To run the inference on a dataset, assuming the test, please make sure to have the subjects folders in the same directory structure. Assuming you have the folders inside `dataset/tests/*`. Please run the following commands as in order.
+
+Make sure to run the `prepare_keypoints_transformix` only once.
+```
+python prepare_keypoints_transformix.py --dataset_path "dataset/test" --keypoint_type "inhale"
+```
+```
+python parse_raw.py --dataset_path "dataset/test"
+```
+```
+python segment.py --dataset_path "dataset/test"
+```
+Make sure to copy the landmarks, the lung masks (segmentation), or the dataset json to the output folder after pre-processing.
+```
+python preprocess.py --dataset_path "dataset/test" --experiment_name "Normalization"
+```
+```
+python create_script.py --dataset_path "dataset_processed/Normalization/test" --experiment_name "TEST-ALL" --parameters_path "elastix-parameters/ParCOPDBest/Par0003.bs-R6-ug-5000SpatialSamples-3000itr.txt" --use_masks
+```
+Then call the batch file.
+```
+python evaluate_transformation.py --experiment_name "TEST-ALL" --reg_params_key "Par0003.bs-R6-ug-5000SpatialSamples-3000itr" --dataset_path "dataset_processed/Normalization/test"
+```
