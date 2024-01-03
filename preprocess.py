@@ -106,20 +106,23 @@ if __name__ == "__main__":
         normalized_image_sitk = sitk.GetImageFromArray(normalized_image)
         normalized_image_sitk.CopyInformation(sample_sitk)
 
-        # denoising the image using bilateral filter
-        logger.info(">> Denoising using bilateral filter...")
-        domain_sigma = 2.0
-        range_sigma = 50.0 
+        # only export the normalized image
+        export(args, sample_name, filename_full, normalized_image_sitk)
 
-        filtered_sitk = bilateral_filter_3d(normalized_image_sitk, domain_sigma, range_sigma)
-        filtered_image = sitk.GetArrayFromImage(filtered_sitk)
+        # # denoising the image using bilateral filter
+        # logger.info(">> Denoising using bilateral filter...")
+        # domain_sigma = 2.0
+        # range_sigma = 50.0 
 
-        # contrast enhancment using adaptive histogram equalization
-        logger.info(">> Contrast enhancement using CLAHE...")
-        final_processed_sitk = clahe_3d(filtered_sitk, clip_limit=0.01)
+        # filtered_sitk = bilateral_filter_3d(normalized_image_sitk, domain_sigma, range_sigma)
+        # filtered_image = sitk.GetArrayFromImage(filtered_sitk)
 
-        # export the final processed image to the output folder
-        export(args, sample_name, filename_full, final_processed_sitk)
+        # # contrast enhancment using adaptive histogram equalization
+        # logger.info(">> Contrast enhancement using CLAHE...")
+        # final_processed_sitk = clahe_3d(filtered_sitk, clip_limit=0.01)
+
+        # # export the final processed image to the output folder
+        # export(args, sample_name, filename_full, final_processed_sitk)
 
 
 
