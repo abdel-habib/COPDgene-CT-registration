@@ -116,7 +116,7 @@ python preprocess.py --dataset_path "dataset/test" --experiment_name "Normalizat
 ```
 python create_script.py --dataset_path "dataset_processed/Normalization/test" --experiment_name "TEST-ALL" --parameters_path "elastix-parameters/ParCOPDBest/Par0003.bs-R6-ug-5000SpatialSamples-3000itr.txt" --use_masks
 ```
-Then call the batch file.
+Then call the batch file for the above script. The, evaluate below to create the submission files (without `--generate_report` as we don't have ground truth).
 ```
 python evaluate_transformation.py --experiment_name "TEST-ALL" --reg_params_key "Par0003.bs-R6-ug-5000SpatialSamples-3000itr" --dataset_path "dataset_processed/Normalization/test"
 ```
