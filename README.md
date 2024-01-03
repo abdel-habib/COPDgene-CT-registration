@@ -13,6 +13,7 @@ Table of Contents
    * [Dataset Structure](#dataset-structure)
    * [Dataset Exploration](#dataset-exploration)
    * [Setup Guideline](#setup-guideline)
+   * [Test Inference](#test-inference)
 <!--te-->
 
 
